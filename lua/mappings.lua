@@ -1,29 +1,18 @@
 require "nvchad.mappings"
 
--- add yours here
-
 local map = vim.keymap.set
-local hop = require "hop"
-local directions = require("hop.hint").HintDirection
 
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jj", "<ESC>")
-map("n", "<leader>ww", "<cmd>w<CR>", { desc = "Save" })
+map({ "n", "i" }, "<C-s>", "<cmd>w<CR>", { desc = "Save" })
+map("n", "<A-s>", "<cmd>wa<CR>", { desc = "Save All" })
+map("n", "<leader>qq", "<cmd>qa<CR>", { desc = "Quit" })
 map("n", "<leader>cx", function()
   require("nvchad.tabufline").closeAllBufs()
 end, { desc = "Close All Buffers" })
 map("i", "<C-g>", function()
   return vim.fn["codeium#Accept"]()
 end, { expr = true })
-
--- Trouble
-
-map("n", "<leader>qx", "<cmd>TroubleToggle<CR>", { desc = "Open Trouble" })
-map("n", "<leader>qw", "<cmd>TroubleToggle workspace_diagnostics<CR>", { desc = "Open Workspace Trouble" })
-map("n", "<leader>qd", "<cmd>TroubleToggle document_diagnostics<CR>", { desc = "Open Document Trouble" })
-map("n", "<leader>qq", "<cmd>TroubleToggle quickfix<CR>", { desc = "Open Quickfix" })
-map("n", "<leader>ql", "<cmd>TroubleToggle loclist<CR>", { desc = "Open Location List" })
-map("n", "<leader>qt", "<cmd>TodoTrouble<CR>", { desc = "Open Todo Trouble" })
 
 -- Terminal
 map("n", "<C-]>", function()
@@ -46,6 +35,10 @@ map("t", "<C-f>", function()
 end, { desc = "Toogle Terminal Float" })
 
 -- hop
+
+local hop = require "hop"
+local directions = require("hop.hint").HintDirection
+
 map("", "f", function()
   hop.hint_char1 { direction = directions.AFTER_CURSOR, current_line_only = true }
 end, { remap = true })
@@ -63,10 +56,20 @@ end, { remap = true })
 map("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Open LazyGit" })
 
 -- Log
-map("n", "<leader>ll", function()
+map("n", "<leader>cl", function()
   require("logsitter").log()
 end, { desc = "Create Console log" })
-map("x", "<leader>ll", function()
+map("x", "<leader>cl", function()
   require("logsitter").log_visual()
 end, { desc = "Create Console log" })
 -- map({ "n", "i", "v" }, "<C-s>", "<cmd> w <cr>")
+
+-- Hop
+local hop = require "hop"
+local directions = require("hop.hint").HintDirection
+vim.keymap.set("n", "s", function()
+  hop.hint_char1 { direction = directions.AFTER_CURSOR, current_line_only = false }
+end, { remap = true })
+vim.keymap.set("n", "S", function()
+  hop.hint_char1 { direction = directions.BEFORE_CURSOR, current_line_only = false }
+end, { remap = true })
