@@ -11,6 +11,122 @@ return {
     config = function()
       require "configs.lspconfig"
     end,
+    opts = {
+			inlay_hints = { enabled = true },
+			---@type lspconfig.options
+			servers = {
+				cssls = {},
+				tailwindcss = {
+					root_dir = function(...)
+						return require("lspconfig.util").root_pattern(".git")(...)
+					end,
+				},
+				tsserver = {
+					root_dir = function(...)
+						return require("lspconfig.util").root_pattern(".git")(...)
+					end,
+					single_file_support = false,
+					settings = {
+						typescript = {
+							inlayHints = {
+								includeInlayParameterNameHints = "literal",
+								includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+								includeInlayFunctionParameterTypeHints = true,
+								includeInlayVariableTypeHints = false,
+								includeInlayPropertyDeclarationTypeHints = true,
+								includeInlayFunctionLikeReturnTypeHints = true,
+								includeInlayEnumMemberValueHints = true,
+							},
+						},
+						javascript = {
+							inlayHints = {
+								includeInlayParameterNameHints = "all",
+								includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+								includeInlayFunctionParameterTypeHints = true,
+								includeInlayVariableTypeHints = true,
+								includeInlayPropertyDeclarationTypeHints = true,
+								includeInlayFunctionLikeReturnTypeHints = true,
+								includeInlayEnumMemberValueHints = true,
+							},
+						},
+					},
+				},
+				html = {},
+				yamlls = {
+					settings = {
+						yaml = {
+							keyOrdering = false,
+						},
+					},
+				},
+				lua_ls = {
+					-- enabled = false,
+					single_file_support = true,
+					settings = {
+						Lua = {
+							workspace = {
+								checkThirdParty = false,
+							},
+							completion = {
+								workspaceWord = true,
+								callSnippet = "Both",
+							},
+							misc = {
+								parameters = {
+									-- "--log-level=trace",
+								},
+							},
+							hint = {
+								enable = true,
+								setType = false,
+								paramType = true,
+								paramName = "Disable",
+								semicolon = "Disable",
+								arrayIndex = "Disable",
+							},
+							doc = {
+								privateName = { "^_" },
+							},
+							type = {
+								castNumberToInteger = true,
+							},
+							diagnostics = {
+								disable = { "incomplete-signature-doc", "trailing-space" },
+								-- enable = false,
+								groupSeverity = {
+									strong = "Warning",
+									strict = "Warning",
+								},
+								groupFileStatus = {
+									["ambiguity"] = "Opened",
+									["await"] = "Opened",
+									["codestyle"] = "None",
+									["duplicate"] = "Opened",
+									["global"] = "Opened",
+									["luadoc"] = "Opened",
+									["redefined"] = "Opened",
+									["strict"] = "Opened",
+									["strong"] = "Opened",
+									["type-check"] = "Opened",
+									["unbalanced"] = "Opened",
+									["unused"] = "Opened",
+								},
+								unusedLocalExclude = { "_*" },
+							},
+							format = {
+								enable = false,
+								defaultConfig = {
+									indent_style = "space",
+									indent_size = "2",
+									continuation_indent_size = "2",
+								},
+							},
+						},
+					},
+				},
+			},
+			setup = {},
+		}
   },
 
   {
@@ -84,14 +200,6 @@ return {
       require("better_escape").setup()
     end,
   },
-
-  -- {
-  --   "ggandor/leap.nvim",
-  --   lazy = false,
-  --   config = function()
-  --     require("leap").add_default_mappings(true)
-  --   end,
-  -- },
 
   {
     "smoka7/hop.nvim",
@@ -204,9 +312,75 @@ return {
   },
 
   {
-    "rcarriga/nvim-notify",
-    lazy = false,
-  },
+		"folke/noice.nvim",
+		opts = function(_, opts)
+			table.insert(opts.routes, {
+				filter = {
+					event = "notify",
+					find = "No information available",
+				},
+				opts = { skip = true },
+			})
+			local focused = true
+			vim.api.nvim_create_autocmd("FocusGained", {
+				callback = function()
+					focused = true
+				end,
+			})
+			vim.api.nvim_create_autocmd("FocusLost", {
+				callback = function()
+					focused = false
+				end,
+			})
+			table.insert(opts.routes, 1, {
+				filter = {
+					cond = function()
+						return not focused
+					end,
+				},
+				view = "notify_send",
+				opts = { stop = false },
+			})
+
+			opts.commands = {
+				all = {
+					-- options for the message history that you get with `:Noice`
+					view = "split",
+					opts = { enter = true, format = "details" },
+					filter = {},
+				},
+			}
+
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "markdown",
+				callback = function(event)
+					vim.schedule(function()
+						require("noice.text.markdown").keys(event.buf)
+					end)
+				end,
+			})
+
+			opts.presets.lsp_doc_border = true
+		end,
+	},
+
+	{
+		"rcarriga/nvim-notify",
+		opts = {
+			timeout = 5000,
+		},
+	},
+
+	-- animations
+	{
+		"echasnovski/mini.animate",
+		event = "VeryLazy",
+		opts = function(_, opts)
+			opts.scroll = {
+				enable = false,
+			}
+		end,
+	},
 
   {
     "gaelph/logsitter.nvim",
@@ -229,5 +403,12 @@ return {
         -- Configuration here, or leave empty to use defaults
       }
     end,
-  },
-} -- y s w "
+  }, -- y s w "
+
+  -- Incremental rename
+	{
+		"smjonas/inc-rename.nvim",
+		cmd = "IncRename",
+		config = true,
+	},
+}
