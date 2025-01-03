@@ -6,7 +6,9 @@ local opts = { noremap = true, silent = true }
 map("n", ";", ":", { desc = "CMD enter command mode" })
 map("i", "jj", "<ESC>")
 map({ "n", "i" }, "<C-s>", "<cmd>w<CR>", { desc = "Save" })
+map("n", "<leader>ss", "<cmd>w<CR>", { desc = "Save" })
 map("n", "<A-s>", "<cmd>wa<CR>", { desc = "Save All" })
+map("n", "<leader>sa", "<cmd>wa<CR>", { desc = "Save All" })
 map("n", "<leader>qq", "<cmd>qa<CR>", { desc = "Quit" })
 map("v", "p", '"_dP', opts)
 map("n", "dd", '"_dd', opts)
@@ -78,5 +80,6 @@ end, { remap = true })
 
 -- Diagnostics
 map("n", "<leader>dn", function()
-	vim.diagnostic.goto_next()
+  vim.diagnostic.goto_next()
 end, { desc = "Next Diagnostic", silent = true, noremap = true })
+
