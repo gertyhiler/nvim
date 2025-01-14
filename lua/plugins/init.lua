@@ -136,8 +136,8 @@ return {
         "stylua",
         "html-lsp",
         "css-lsp",
+        "vtsls",
         "prettierd",
-        "ts_ls",
         "eslint-lsp",
         "tailwindcss-language-server",
         "css-variables-language-server",
@@ -366,7 +366,7 @@ return {
   {
     "rcarriga/nvim-notify",
     opts = {
-      timeout = 5000,
+      timeout = 2000,
     },
   },
 
@@ -430,6 +430,8 @@ return {
   --   end,
   --   dependencies = {
   --     { "nvim-lua/plenary.nvim" },
+  --     { "nvim-telescope/telescope.nvim" },
+  --     { "Shatur/neovim-session-manager" },
   --   },
   --   lazy = false,
   --   priority = 100,

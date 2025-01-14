@@ -82,4 +82,3 @@ end, { remap = true })
 map("n", "<leader>dn", function()
   vim.diagnostic.goto_next()
 end, { desc = "Next Diagnostic", silent = true, noremap = true })
-
